@@ -3,7 +3,9 @@
 Students should extend this file when adding new agents, outputs, or evaluation metrics.
 """
 
-from typing import Any
+from ast import operator
+from operator import add
+from typing import Annotated, Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -15,16 +17,20 @@ class ResearchState(BaseModel):
 
     request: ResearchQuery
     iteration: int = 0
-    route_history: list[str] = Field(default_factory=list)
+    # Thêm trường này để Router có thể đọc được quyết định của Supervisor
+    next_agent: str = "finish" 
+    
+    # Sử dụng Annotated để LangGraph tự động append vào list thay vì overwrite
+    route_history: Annotated[list[str], add] = Field(default_factory=list)
+    sources: Annotated[list[SourceDocument], add] = Field(default_factory=list)
+    
+    research_notes: Optional[str] = None
+    analysis_notes: Optional[str] = None
+    final_answer: Optional[str] = None
 
-    sources: list[SourceDocument] = Field(default_factory=list)
-    research_notes: str | None = None
-    analysis_notes: str | None = None
-    final_answer: str | None = None
-
-    agent_results: list[AgentResult] = Field(default_factory=list)
-    trace: list[dict[str, Any]] = Field(default_factory=list)
-    errors: list[str] = Field(default_factory=list)
+    agent_results: Annotated[list[AgentResult], add] = Field(default_factory=list)
+    trace: Annotated[list[dict[str, Any]], add] = Field(default_factory=list)
+    errors: Annotated[list[str], add] = Field(default_factory=list)
 
     def record_route(self, route: str) -> None:
         self.route_history.append(route)

@@ -12,6 +12,7 @@ class AgentName(StrEnum):
     ANALYST = "analyst"
     WRITER = "writer"
     CRITIC = "critic"
+    BASELINE = "baseline"
 
 
 class ResearchQuery(BaseModel):
@@ -36,6 +37,7 @@ class SourceDocument(BaseModel):
 class BenchmarkMetrics(BaseModel):
     run_name: str
     latency_seconds: float
-    estimated_cost_usd: float | None = None
-    quality_score: float | None = Field(default=None, ge=0, le=10)
-    notes: str = ""
+    cost_usd: float = 0.0
+    quality_score: float = 0.0      # Thang 0-10
+    citation_coverage: float = 0.0 # Tỷ lệ 0.0 - 1.0 (0% - 100%) = 0.0
+    failure_rate: float = 0.0
